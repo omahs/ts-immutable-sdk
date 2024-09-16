@@ -17,7 +17,7 @@ describe('load', () => {
       expect(document.head.innerHTML).toBe(
         '<script id="immutable-checkout-widgets-bundle" '
         + 'data-version="__SDK_VERSION__" '
-        + `src="https://cdn.jsdelivr.net/npm/@imtbl/sdk@${SDK_VERSION}/dist/browser/checkout/widgets.js"></script>`,
+        + `src="https://cdn.jsdelivr.net/npm/@imtbl/checkout-widgets@${SDK_VERSION}/dist/widgets.js"></script>`,
       );
     });
   });
@@ -25,7 +25,7 @@ describe('load', () => {
   describe('get widgets esm url', () => {
     it('should validate the versioning', () => {
       expect(getWidgetsEsmUrl()).toEqual(
-        `https://cdn.jsdelivr.net/npm/@imtbl/sdk@${SDK_VERSION}/dist/browser/checkout/widgets-esm.js`,
+        `https://cdn.jsdelivr.net/npm/@imtbl/checkout-widgets@${SDK_VERSION}/dist/index.js`,
       );
     });
 
@@ -35,7 +35,7 @@ describe('load', () => {
         minor: 2,
         patch: 3,
       })).toEqual(
-        'https://cdn.jsdelivr.net/npm/@imtbl/sdk@1.2.3/dist/browser/checkout/widgets-esm.js',
+        'https://cdn.jsdelivr.net/npm/@imtbl/checkout-widgets@1.2.3/dist/index.js',
       );
     });
   });
