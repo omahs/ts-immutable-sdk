@@ -92,10 +92,11 @@ export default function AddFundsWidget({
         chainIds,
         evmAddress: fromAddress,
       });
+      const positiveBalances = balances?.evmBalances?.filter((balance) => balance.balance === '0');
       addFundsDispatch({
         payload: {
           type: AddFundsActions.SET_BALANCES,
-          balances: balances?.evmBalances ?? [],
+          balances: positiveBalances ?? [],
         },
       });
     })();
