@@ -30,6 +30,6 @@ export const fetchChains = async (): Promise<Chain[]> => {
     name: chain.chainName,
     iconUrl: chain.chainIconURI,
     type: chain.chainType,
-  }));
+  })).filter((chain) => chain.type === 'evm');
   return chains;
 };

@@ -27,6 +27,7 @@ import {
   ViewActions,
   ViewContext,
 } from '../../../context/view-context/ViewContext';
+import { useRoutes } from '../hooks/useRoutes';
 
 interface AddFundsProps {
   checkout?: Checkout;
@@ -35,6 +36,7 @@ interface AddFundsProps {
   showSwapOption?: boolean;
   showBridgeOption?: boolean;
   toTokenAddress?: string;
+  toChainId: string;
   toAmount?: string;
   onCloseButtonClick?: () => void;
   onBackButtonClick?: () => void;
@@ -45,6 +47,7 @@ export function AddFunds({
   provider,
   toAmount,
   toTokenAddress,
+  toChainId,
   showOnrampOption = true,
   showSwapOption = true,
   showBridgeOption = true,
@@ -52,11 +55,8 @@ export function AddFunds({
   onCloseButtonClick,
 }: AddFundsProps) {
   console.log('provider', provider);
-  console.log('showOnrampOption', showOnrampOption);
-  console.log('showSwapOption', showSwapOption);
-  console.log('showBridgeOption', showBridgeOption);
 
-  const { addFundsDispatch } = useContext(AddFundsContext);
+  const { addFundsState, addFundsDispatch } = useContext(AddFundsContext);
 
   const { viewDispatch } = useContext(ViewContext);
 
@@ -75,6 +75,8 @@ export function AddFunds({
   const [currentToTokenAddress, setCurrentToTokenAddress] = useState<
   TokenInfo | undefined
   >();
+
+  const { getRoutes } = useRoutes();
 
   const showErrorView = useCallback(
     (error: Error) => {
@@ -150,6 +152,15 @@ export function AddFunds({
   }, [checkout]);
 
   const openDrawer = () => {
+    if (addFundsState.squid) {
+      getRoutes(
+        addFundsState.squid,
+        addFundsState.balances,
+        toChainId,
+        currentToTokenAddress?.address ?? '',
+        currentToAmount ?? '',
+      );
+    }
     setShowOptionsDrawer(true);
   };
 
@@ -159,7 +170,7 @@ export function AddFunds({
 
   const isSelected = (token: TokenInfo) => token.address === currentToTokenAddress;
 
-  const isDisabled = !currentToTokenAddress || !toAmount || parseFloat(toAmount) <= 0;
+  const isDisabled = () => !currentToTokenAddress || !currentToAmount || parseFloat(currentToAmount) <= 0;
 
   const handleTokenChange = (token: TokenInfo) => {
     setCurrentToTokenAddress(token);
@@ -170,10 +181,6 @@ export function AddFunds({
   // };
 
   const onPayWithCard = (paymentType: OptionTypes) => {
-    console.log('paymentType', paymentType);
-    console.log('=== toTokenAddress', currentToTokenAddress);
-    console.log('=== toAmount', toAmount);
-
     if (paymentType === OptionTypes.SWAP) {
       orchestrationEvents.sendRequestSwapEvent(
         eventTarget,
@@ -278,10 +285,10 @@ export function AddFunds({
         <MenuItem
           size="small"
           emphasized
-          disabled={isDisabled}
+          disabled={isDisabled()}
           sx={{
-            opacity: isDisabled ? 0.5 : 1,
-            cursor: isDisabled ? 'not-allowed' : 'pointer',
+            opacity: isDisabled() ? 0.5 : 1,
+            cursor: isDisabled() ? 'not-allowed' : 'pointer',
           }}
           onClick={() => {
             openDrawer();

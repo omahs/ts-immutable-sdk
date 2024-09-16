@@ -1,4 +1,5 @@
-import { AddFundsWidgetParams, Checkout } from '@imtbl/checkout-sdk';
+/* eslint-disable no-console */
+import { AddFundsWidgetParams, Checkout, ChainId } from '@imtbl/checkout-sdk';
 import { Web3Provider } from '@ethersproject/providers';
 import {
   useContext, useEffect, useMemo, useReducer,
@@ -11,7 +12,10 @@ import {
 import { EventTargetContext } from '../../context/event-target-context/EventTargetContext';
 
 import {
-  AddFundsActions, AddFundsContext, addFundsReducer, initialAddFundsState,
+  AddFundsActions,
+  AddFundsContext,
+  addFundsReducer,
+  initialAddFundsState,
 } from './context/AddFundsContext';
 import { AddFundsWidgetViews } from '../../context/view-context/AddFundsViewContextTypes';
 import {
@@ -23,7 +27,10 @@ import {
 import { AddFunds } from './views/AddFunds';
 import { ErrorView } from '../../views/error/ErrorView';
 import { useSquid } from './hooks/useSquid';
-import { useAnalytics, UserJourney } from '../../context/analytics-provider/SegmentAnalyticsProvider';
+import {
+  useAnalytics,
+  UserJourney,
+} from '../../context/analytics-provider/SegmentAnalyticsProvider';
 import { fetchChains } from './functions/fetchChains';
 
 export type AddFundsWidgetInputs = AddFundsWidgetParams & {
@@ -56,7 +63,10 @@ export default function AddFundsWidget({
     [viewState, viewReducer],
   );
 
-  const [addFundsState, addFundsDispatch] = useReducer(addFundsReducer, initialAddFundsState);
+  const [addFundsState, addFundsDispatch] = useReducer(
+    addFundsReducer,
+    initialAddFundsState,
+  );
 
   const addFundsReducerValues = useMemo(
     () => ({
@@ -71,6 +81,7 @@ export default function AddFundsWidget({
   useEffect(() => {
     (async () => {
       const chains = await fetchChains();
+      console.log('!!!!chains', chains);
 
       addFundsDispatch({
         payload: {
@@ -82,17 +93,27 @@ export default function AddFundsWidget({
   }, []);
 
   useEffect(() => {
-    if (!addFundsState.squid || !addFundsState.chains || !addFundsState.provider) return;
+    if (
+      !addFundsState.squid
+      || !addFundsState.chains
+      || !addFundsState.provider
+    ) return;
 
     (async () => {
       const chainIds = addFundsState.chains.map((chain) => chain.id);
-      const fromAddress = await addFundsState.provider?.getSigner().getAddress();
+      const fromAddress = await addFundsState.provider
+        ?.getSigner()
+        .getAddress();
 
       const balances = await addFundsState.squid?.getAllBalances({
         chainIds,
         evmAddress: fromAddress,
       });
-      const positiveBalances = balances?.evmBalances?.filter((balance) => balance.balance === '0');
+      const positiveBalances = balances?.evmBalances?.filter(
+        (balance) => balance.balance !== '0',
+      );
+
+      console.log('!!!!balance', positiveBalances);
       addFundsDispatch({
         payload: {
           type: AddFundsActions.SET_BALANCES,
@@ -146,6 +167,11 @@ export default function AddFundsWidget({
             provider={web3Provider}
             toTokenAddress={toTokenAddress}
             toAmount={toAmount}
+            toChainId={
+              checkout.config.isProduction
+                ? ChainId.IMTBL_ZKEVM_MAINNET.toString()
+                : ChainId.IMTBL_ZKEVM_TESTNET.toString()
+            }
             showOnrampOption={showOnrampOption}
             showSwapOption={showSwapOption}
             showBridgeOption={showBridgeOption}
