@@ -2,8 +2,8 @@
   "name": "factory-sample-app",
   "version": "0.1.0",
   "dependencies": {
-    "@imtbl/config": "0.0.0",
-    "@imtbl/factory-sdk": "0.0.0",
+    "@imtbl/config": "workspace:*",
+    "@imtbl/factory-sdk": "workspace:*",
     "ethers": "^5.7.2"
   },
   "devDependencies": {
