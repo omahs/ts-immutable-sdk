@@ -16,7 +16,7 @@
   "dependencies": {
     "@0xsquid/sdk": "^2.8.24",
     "@biom3/design-tokens": "^0.4.2",
-    "@biom3/react": "^0.25.0",
+    "@biom3/react": "0.25.0",
     "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
     "@imtbl/bridge-sdk": "workspace:*",
