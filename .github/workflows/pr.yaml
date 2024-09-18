@@ -124,25 +124,6 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-  build-examples:
-    name: Build Examples
-    needs: build-sdk
-    runs-on: ubuntu-latest-8-cores
-    env:
-      NODE_OPTIONS: --max-old-space-size=14366
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: setup
-        uses: ./.github/actions/setup
-
-      - name: Setup examples
-        uses: ./.github/actions/setup-examples
-
-      - name: Build examples
-        run: pnpm build:examples
-
   lint-examples:
     name: Lint Examples
     needs: build-sdk
@@ -178,12 +159,14 @@ jobs:
       - name: Setup examples
         uses: ./.github/actions/setup-examples
 
+      - name: Build examples
+        run: pnpm build:examples
+
       - name: Setup playwright
         uses: ./.github/actions/setup-playwright
 
       - name: Test examples
         run: pnpm test:examples
-      
 
   func-test-imx:
     name: imx func tests
