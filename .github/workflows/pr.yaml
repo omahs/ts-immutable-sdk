@@ -67,7 +67,7 @@ jobs:
       - name: setup
         uses: ./.github/actions/setup
       - name: Build
-        run: pnpm --if-present nx affected --target=build --parallel=5
+        run: pnpm --if-present nx affected --target=build
 
   typecheck-sdk:
     name: Typecheck SDK
@@ -124,27 +124,8 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-  lint-examples:
-    name: Lint Examples
-    needs: build-sdk
-    runs-on: ubuntu-latest-4-cores
-    env:
-      NODE_OPTIONS: --max-old-space-size=14366
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: setup
-        uses: ./.github/actions/setup
-
-      - name: Setup examples
-        uses: ./.github/actions/setup-examples
-
-      - name: Lint examples
-        run: pnpm lint:examples
-
-  test-examples:
-    name: Test Examples
+  build-lint-test-examples:
+    name: Build, Lint & Test Examples
     needs: build-sdk
     runs-on: ubuntu-latest-8-cores
     env:
@@ -155,12 +136,15 @@ jobs:
 
       - name: setup
         uses: ./.github/actions/setup
-
-      - name: Setup examples
-        uses: ./.github/actions/setup-examples
+        
+      - name: Prepare examples
+        run: pnpm prepare:examples
 
       - name: Build examples
         run: pnpm build:examples
+
+      - name: Lint examples
+        run: pnpm lint:examples
 
       - name: Setup playwright
         uses: ./.github/actions/setup-playwright

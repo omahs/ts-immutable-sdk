@@ -11,6 +11,7 @@ const config: Config = {
   },
   transformIgnorePatterns: [],
   restoreMocks: true,
+  modulePathIgnorePatterns: ['<rootDir>/.yalc'],
 };
 
 export default config;

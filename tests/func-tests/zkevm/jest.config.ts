@@ -25,6 +25,7 @@ const config: Config = {
     "^.+\\.module\\.(css|sass|scss)$",
   ],
   setupFilesAfterEnv: ['./jest.setup.ts'],
+  modulePathIgnorePatterns: ['<rootDir>/.yalc'],
 };
 
 export default config;
